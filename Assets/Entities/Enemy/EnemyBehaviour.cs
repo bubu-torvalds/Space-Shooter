@@ -9,8 +9,12 @@ public class EnemyBehaviour : MonoBehaviour {
 		
 		if(projectile) {
 			Debug.Log ("touché");
-			Destroy(projectile);
+			Hit();		
 		}
+	
+	}
+	
+	void Hit() {
 	
 	}
 }
