@@ -9,12 +9,10 @@ public class EnemyBehaviour : MonoBehaviour {
 		
 		if(projectile) {
 			Debug.Log ("touché");
-			Hit();		
+					
 		}
 	
 	}
 	
-	void Hit() {
 	
-	}
 }
