@@ -3,33 +3,42 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 
-	public float minPosX = 0.5f;
-	public float maxPosX = 15.5f;
+	private float minPosX;
+	private float maxPosX;
 	public float shipSpeed = 15f;
+	public float padding = 1;
 	
-	private Vector3 shipPosition;
 
 	// Use this for initialization
 	void Start () {
-		shipPosition = new Vector3(minPosX, this.transform.position.y, 0);
+	
+		Camera mainCamera = Camera.main;
+	
+		// distance en Z de la camera au gameobject du joueur
+		float distance = transform.position.z - mainCamera.transform.position.z;		
+		
+		// Position en bas à gauche de la zone de jeu
+		Vector3 leftMostPos = Camera.main.ViewportToWorldPoint(new Vector3(0,0,distance));
+		
+		// Position en bas à droite de la zone de jeu
+		Vector3 rightMostPos = Camera.main.ViewportToWorldPoint(new Vector3(1,0,distance));
+		
+		minPosX = leftMostPos.x + padding;
+		maxPosX = rightMostPos.x - padding;
 	}
 	
 	// Update is called once per frame
 	void Update () {		
 		
-		if (Input.GetKey(KeyCode.LeftArrow)) {
+		if (Input.GetKey(KeyCode.LeftArrow)) {			
+			transform.position += Vector3.left * shipSpeed * Time.deltaTime;			
+		} else if (Input.GetKey(KeyCode.RightArrow)) {		
+			transform.position += Vector3.right * shipSpeed * Time.deltaTime;		
+		}	
 		
-			shipPosition.x -= shipSpeed * Time.deltaTime;
-			
-		} else if (Input.GetKey(KeyCode.RightArrow)) {
-			
-			shipPosition.x += shipSpeed * Time.deltaTime;
+		// pour restreindre la position du joueur dans la zone de jeu
+		float newX = Mathf.Clamp(transform.position.x, minPosX, maxPosX);
 		
-		}
-		
-		shipPosition.x = Mathf.Clamp(shipPosition.x, -maxPosX, maxPosX);
-		
-		this.transform.position = shipPosition;
-	
+		transform.position = new Vector3(newX, transform.position.y, transform.position.z);
 	}
 }
