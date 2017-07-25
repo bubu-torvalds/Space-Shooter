@@ -12,19 +12,7 @@ public class PlayerController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		Camera mainCamera = Camera.main;
-	
-		// distance en Z de la camera au gameobject du joueur
-		float distance = transform.position.z - mainCamera.transform.position.z;		
-		
-		// Position en bas à gauche de la zone de jeu
-		Vector3 leftMostPos = Camera.main.ViewportToWorldPoint(new Vector3(0,0,distance));
-		
-		// Position en bas à droite de la zone de jeu
-		Vector3 rightMostPos = Camera.main.ViewportToWorldPoint(new Vector3(1,0,distance));
-		
-		minPosX = leftMostPos.x + padding;
-		maxPosX = rightMostPos.x - padding;
+		DetectGameSpace();
 	}
 	
 	// Update is called once per frame
@@ -40,5 +28,23 @@ public class PlayerController : MonoBehaviour {
 		float newX = Mathf.Clamp(transform.position.x, minPosX, maxPosX);
 		
 		transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+	}
+	
+	void DetectGameSpace() {
+	
+		Camera mainCamera = Camera.main;
+		
+		// distance en Z de la camera au gameobject du joueur
+		float distance = transform.position.z - mainCamera.transform.position.z;		
+		
+		// Position en bas à gauche de la zone de jeu
+		Vector3 leftBoundary = Camera.main.ViewportToWorldPoint(new Vector3(0,0,distance));
+		
+		// Position en bas à droite de la zone de jeu
+		Vector3 rightBoundary = Camera.main.ViewportToWorldPoint(new Vector3(1,0,distance));
+		
+		minPosX = leftBoundary.x + padding;
+		maxPosX = rightBoundary.x - padding;
+		
 	}
 }
