@@ -2,11 +2,15 @@
 using System.Collections;
 
 public class PlayerController : MonoBehaviour {
-
-	private float minPosX;
-	private float maxPosX;
+	
 	public float shipSpeed = 15f;
 	public float padding = 1;
+	public GameObject projectile;
+	public float projectileSpeed;
+	public float firingRate = 0.2f;
+	
+	private float minPosX;
+	private float maxPosX;
 	
 
 	// Use this for initialization
@@ -15,8 +19,24 @@ public class PlayerController : MonoBehaviour {
 		DetectGameSpace();
 	}
 	
+	void Fire() {
+	
+		GameObject laser = Instantiate(projectile, transform.position, Quaternion.identity) as GameObject;
+		
+		laser.rigidbody2D.velocity = new Vector3(0, projectileSpeed, 0);
+		
+	}
+	
 	// Update is called once per frame
-	void Update () {		
+	void Update () {	
+	
+		if (Input.GetKeyDown(KeyCode.Space)) {		
+			InvokeRepeating("Fire", 0.000001f, firingRate); 			
+		} 
+		
+		if (Input.GetKeyUp(KeyCode.Space)) {
+			CancelInvoke("Fire");
+		}
 		
 		if (Input.GetKey(KeyCode.LeftArrow)) {			
 			transform.position += Vector3.left * shipSpeed * Time.deltaTime;			
@@ -28,6 +48,8 @@ public class PlayerController : MonoBehaviour {
 		float newX = Mathf.Clamp(transform.position.x, minPosX, maxPosX);
 		
 		transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+		
+		
 	}
 	
 	void DetectGameSpace() {
