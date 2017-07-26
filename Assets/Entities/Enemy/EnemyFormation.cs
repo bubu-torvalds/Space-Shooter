@@ -7,16 +7,25 @@ public class EnemyFormation : MonoBehaviour {
 	public GameObject projectile;
 	public float projectileSpeed;
 	public float shotsPerSeconds = 0.5f;
+	public int scoreValue = 150;
+	
+	private ScoreKeeper scoreKeeper;
+	
+	void Start() {
+		scoreKeeper = GameObject.Find("Score").GetComponent<ScoreKeeper>();
+	}
 
 	void OnTriggerEnter2D(Collider2D col) {
 	
 		Projectile projectile = col.gameObject.GetComponent<Projectile>();
+		
 		
 		if(projectile) {
 			health -= projectile.GetDamage();
 			projectile.Hit();
 			if (health <= 0) {
 				Destroy(gameObject);
+				scoreKeeper.Score(scoreValue);
 			}
 					
 		}
