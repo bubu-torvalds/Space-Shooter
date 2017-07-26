@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject projectile;
 	public float projectileSpeed;
 	public float firingRate = 0.2f;
-	public float health = 250f;
+	public float health;
 	
 	private float minPosX;
 	private float maxPosX;

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemySpawner : MonoBehaviour {
+public class FormationController : MonoBehaviour {
 	
 	public float width = 10f;
 	public float height = 5f;
@@ -16,15 +16,17 @@ public class EnemySpawner : MonoBehaviour {
 	
 
 	// Use this for initialization
-	void Start () {	
+	void Start () {		
+		DetectGameSpace();		
+		SpawnEnemies();		
+	}
 	
-		DetectGameSpace();
-				
+	void SpawnEnemies() {
 		foreach(Transform child in transform) {
 			GameObject enemy = Instantiate(enemyPrefab, child.transform.position, Quaternion.identity) as GameObject;
 			// on l'attache à enemyFormation
 			enemy.transform.parent = child;
-		}		
+		}
 	}
 	
 	public void OnDrawGizmos() {
@@ -32,8 +34,7 @@ public class EnemySpawner : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
+	void Update () {		
 		if (movingRight) {
 			transform.position += Vector3.right * enemySpeed * Time.deltaTime;			
 		} else {		
@@ -48,11 +49,23 @@ public class EnemySpawner : MonoBehaviour {
 		} else if (rightFormationEdge > maxPosX) {
 			movingRight = false;
 		}		
+		
+		if (AllMembersDead()) {
+			SpawnEnemies();
+		}
 	
 	}
 	
-	void DetectGameSpace() {
-		
+	bool AllMembersDead() {
+		foreach(Transform childPositionGameObject in transform) { // transform is the transform of the enemyFormation game object
+			if (childPositionGameObject.childCount > 0) {
+				return false;
+			}			
+		}
+		return true;
+	}
+	
+	void DetectGameSpace() {		
 		Camera mainCamera = Camera.main;
 		
 		// distance en Z de la camera au gameobject du joueur
@@ -65,7 +78,6 @@ public class EnemySpawner : MonoBehaviour {
 		Vector3 rightBoundary = Camera.main.ViewportToWorldPoint(new Vector3(1,0,distance));
 		
 		minPosX = leftBoundary.x + padding;
-		maxPosX = rightBoundary.x - padding;
-		
+		maxPosX = rightBoundary.x - padding;		
 	}
 }
