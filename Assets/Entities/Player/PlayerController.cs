@@ -9,30 +9,27 @@ public class PlayerController : MonoBehaviour {
 	public float projectileSpeed;
 	public float firingRate = 0.2f;
 	public float health;
+	public AudioClip laserSound;
+	public AudioClip dyingSound;
+	public float audioVolume = 0.5f;
 	
 	private float minPosX;
 	private float maxPosX;
 	
 
 	// Use this for initialization
-	void Start () {
-	
+	void Start () {	
 		DetectGameSpace();
 	}
 	
-	void Fire() {
-	
-		Vector3 startPosition = transform.position + new Vector3(0, 0.5f, 0);
-	
-		GameObject laser = Instantiate(projectile, startPosition, Quaternion.identity) as GameObject;
-		
-		laser.rigidbody2D.velocity = new Vector3(0, projectileSpeed, 0);
-		
+	void Fire() {	
+		GameObject laser = Instantiate(projectile, transform.position, Quaternion.identity) as GameObject;		
+		laser.rigidbody2D.velocity = new Vector3(0, projectileSpeed, 0);		
+		AudioSource.PlayClipAtPoint(laserSound, transform.position, audioVolume);		
 	}
 	
 	// Update is called once per frame
 	void Update () {	
-	
 		if (Input.GetKeyDown(KeyCode.Space)) {		
 			InvokeRepeating("Fire", 0.000001f, firingRate); 			
 		} 
@@ -48,15 +45,11 @@ public class PlayerController : MonoBehaviour {
 		}	
 		
 		// pour restreindre la position du joueur dans la zone de jeu
-		float newX = Mathf.Clamp(transform.position.x, minPosX, maxPosX);
-		
-		transform.position = new Vector3(newX, transform.position.y, transform.position.z);
-		
-		
+		float newX = Mathf.Clamp(transform.position.x, minPosX, maxPosX);		
+		transform.position = new Vector3(newX, transform.position.y, transform.position.z);		
 	}
 	
-	void DetectGameSpace() {
-	
+	void DetectGameSpace() {	
 		Camera mainCamera = Camera.main;
 		
 		// distance en Z de la camera au gameobject du joueur
@@ -69,12 +62,10 @@ public class PlayerController : MonoBehaviour {
 		Vector3 rightBoundary = Camera.main.ViewportToWorldPoint(new Vector3(1,0,distance));
 		
 		minPosX = leftBoundary.x + padding;
-		maxPosX = rightBoundary.x - padding;
-		
+		maxPosX = rightBoundary.x - padding;		
 	}
 	
-	void OnTriggerEnter2D(Collider2D col) {
-	
+	void OnTriggerEnter2D(Collider2D col) {	
 		Projectile projectile = col.gameObject.GetComponent<Projectile>();
 		
 		if(projectile) {
@@ -82,8 +73,8 @@ public class PlayerController : MonoBehaviour {
 			projectile.Hit();
 			if (health <= 0) {
 				Destroy(gameObject);
-			}
-			
+				AudioSource.PlayClipAtPoint(laserSound, transform.position, audioVolume);	
+			}			
 		}
 	}
 }

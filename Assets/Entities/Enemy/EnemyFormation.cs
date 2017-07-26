@@ -8,6 +8,9 @@ public class EnemyFormation : MonoBehaviour {
 	public float projectileSpeed;
 	public float shotsPerSeconds = 0.5f;
 	public int scoreValue = 150;
+	public AudioClip laserSound;
+	public AudioClip destroySound;
+	public float audioVolume = 0.5f;
 	
 	private ScoreKeeper scoreKeeper;
 	
@@ -19,22 +22,28 @@ public class EnemyFormation : MonoBehaviour {
 	
 		Projectile projectile = col.gameObject.GetComponent<Projectile>();
 		
-		
 		if(projectile) {
 			health -= projectile.GetDamage();
 			projectile.Hit();
 			if (health <= 0) {
-				Destroy(gameObject);
-				scoreKeeper.Score(scoreValue);
+				Die();
 			}
 					
 		}
+	}
+	
+	void Die() {
+		Destroy(gameObject);
+		AudioSource.PlayClipAtPoint(destroySound, transform.position, audioVolume);
+		scoreKeeper.Score(scoreValue);
 	}	
 	
 	void Fire() {		
-		Vector3 startPosition = transform.position + new Vector3(0, -1, 0);	
-		GameObject laser = Instantiate(projectile, startPosition, Quaternion.identity) as GameObject;			
+		GameObject laser = Instantiate(projectile, transform.position, Quaternion.identity) as GameObject;			
 		laser.rigidbody2D.velocity = new Vector3(0, -projectileSpeed, 0);
+		
+		AudioSource.PlayClipAtPoint(laserSound, transform.position, audioVolume);
+		
 	}
 	
 	void Update() {	
