@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject projectile;
 	public float projectileSpeed;
 	public float firingRate = 0.2f;
+	public float health = 250f;
 	
 	private float minPosX;
 	private float maxPosX;
@@ -21,7 +22,9 @@ public class PlayerController : MonoBehaviour {
 	
 	void Fire() {
 	
-		GameObject laser = Instantiate(projectile, transform.position, Quaternion.identity) as GameObject;
+		Vector3 startPosition = transform.position + new Vector3(0, 0.5f, 0);
+	
+		GameObject laser = Instantiate(projectile, startPosition, Quaternion.identity) as GameObject;
 		
 		laser.rigidbody2D.velocity = new Vector3(0, projectileSpeed, 0);
 		
@@ -68,5 +71,19 @@ public class PlayerController : MonoBehaviour {
 		minPosX = leftBoundary.x + padding;
 		maxPosX = rightBoundary.x - padding;
 		
+	}
+	
+	void OnTriggerEnter2D(Collider2D col) {
+	
+		Projectile projectile = col.gameObject.GetComponent<Projectile>();
+		
+		if(projectile) {
+			health -= projectile.GetDamage();
+			projectile.Hit();
+			if (health <= 0) {
+				Destroy(gameObject);
+			}
+			
+		}
 	}
 }

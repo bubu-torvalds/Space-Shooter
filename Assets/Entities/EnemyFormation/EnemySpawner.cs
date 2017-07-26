@@ -9,6 +9,7 @@ public class EnemySpawner : MonoBehaviour {
 	public GameObject enemyPrefab;
 	public float padding = 1;
 	
+	
 	private float minPosX;
 	private float maxPosX;
 	private bool movingRight = true;
