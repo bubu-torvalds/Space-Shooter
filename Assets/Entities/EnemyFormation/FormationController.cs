@@ -8,6 +8,7 @@ public class FormationController : MonoBehaviour {
 	public float enemySpeed = 5f;
 	public GameObject enemyPrefab;
 	public float padding = 1;
+	public float spawnDelay = 0.5f;
 	
 	
 	private float minPosX;
@@ -18,15 +19,7 @@ public class FormationController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {		
 		DetectGameSpace();		
-		SpawnEnemies();		
-	}
-	
-	void SpawnEnemies() {
-		foreach(Transform child in transform) {
-			GameObject enemy = Instantiate(enemyPrefab, child.transform.position, Quaternion.identity) as GameObject;
-			// on l'attache à enemyFormation
-			enemy.transform.parent = child;
-		}
+		SpawnUntilFull();		
 	}
 	
 	public void OnDrawGizmos() {
@@ -51,9 +44,31 @@ public class FormationController : MonoBehaviour {
 		}		
 		
 		if (AllMembersDead()) {
-			SpawnEnemies();
+			SpawnUntilFull();
 		}
 	
+	}
+	
+	void SpawnUntilFull() {	
+		Transform freePosition = NextFreePosition();
+		if (freePosition) {
+			GameObject enemy = Instantiate(enemyPrefab, freePosition.position, Quaternion.identity) as GameObject;
+			// on l'attache à enemyFormation
+			enemy.transform.parent = freePosition;
+		}
+		if (NextFreePosition()) {
+			Invoke("SpawnUntilFull", spawnDelay);
+		}
+	}
+	
+	
+	Transform NextFreePosition() {
+		foreach(Transform childPositionGameObject in transform) { // transform is the transform of the enemyFormation game object
+			if (childPositionGameObject.childCount == 0) {
+				return childPositionGameObject;
+			}			
+		}
+		return null;
 	}
 	
 	bool AllMembersDead() {
