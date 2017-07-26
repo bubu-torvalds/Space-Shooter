@@ -72,9 +72,15 @@ public class PlayerController : MonoBehaviour {
 			health -= projectile.GetDamage();
 			projectile.Hit();
 			if (health <= 0) {
-				Destroy(gameObject);
-				AudioSource.PlayClipAtPoint(laserSound, transform.position, audioVolume);	
+				Die();	
 			}			
 		}
+	}
+	
+	void Die() {
+		Destroy(gameObject);
+		AudioSource.PlayClipAtPoint(laserSound, transform.position, audioVolume);
+		LevelManager levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+		levelManager.LoadLevel("Win Screen");
 	}
 }

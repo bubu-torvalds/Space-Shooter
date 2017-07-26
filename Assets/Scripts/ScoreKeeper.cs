@@ -4,7 +4,7 @@ using System.Collections;
 
 public class ScoreKeeper : MonoBehaviour {
 
-	public int score = 0;
+	public static int score = 0;
 	public AudioClip scoreSound;
 	public float audioVolume = 0.2f;
 	private Text scoreText;	
@@ -20,9 +20,8 @@ public class ScoreKeeper : MonoBehaviour {
 		AudioSource.PlayClipAtPoint(scoreSound, transform.position, audioVolume);
 	}
 	
-	public void Reset() {
+	public static void Reset() {
 		score = 0;
-		scoreText.text = score.ToString();
 	}
 	
 }
